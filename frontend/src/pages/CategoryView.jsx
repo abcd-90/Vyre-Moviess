@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import MovieCard from '../components/MovieCard';
 import { Film, Tv, Filter, Calendar, Sparkles, X, Star } from 'lucide-react';
+import { FALLBACK_HOMEPAGE_DATA } from '../data/fallbackData';
 
 const GENRES = [
   'All Genres',
@@ -49,12 +50,16 @@ export default function CategoryView({ categoryKey, title, bookmarkMap, onToggle
     fetch(`/api/homepage?tab=${categoryKey}`)
       .then(res => res.json())
       .then(data => {
-        const catalog = data.catalog || [];
+        const catalog = (data && data.catalog && data.catalog.length > 0) ? data.catalog : FALLBACK_HOMEPAGE_DATA.catalog;
         setBaseItems(catalog);
         setDisplayItems(catalog);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setBaseItems(FALLBACK_HOMEPAGE_DATA.catalog);
+        setDisplayItems(FALLBACK_HOMEPAGE_DATA.catalog);
+        setLoading(false);
+      });
   }, [categoryKey]);
 
   // Handle filter changes (Genre, Year, Search Query)

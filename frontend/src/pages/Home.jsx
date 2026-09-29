@@ -2,15 +2,10 @@ import React, { useEffect, useState } from 'react';
 import Hero from '../components/Hero';
 import MovieCard from '../components/MovieCard';
 import { Play, TrendingUp, Sparkles, Tv, Film } from 'lucide-react';
+import { FALLBACK_HOMEPAGE_DATA } from '../data/fallbackData';
 
 export default function Home({ bookmarkMap, onToggleBookmark, continueWatching = [] }) {
-  const [data, setData] = useState({
-    featured: [],
-    trending: [],
-    popular: [],
-    recentlyAdded: [],
-    catalog: []
-  });
+  const [data, setData] = useState(FALLBACK_HOMEPAGE_DATA);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -21,12 +16,16 @@ export default function Home({ bookmarkMap, onToggleBookmark, continueWatching =
         return res.json();
       })
       .then(d => {
-        setData(d);
+        if (d && ( (d.trending && d.trending.length > 0) || (d.catalog && d.catalog.length > 0) )) {
+          setData(d);
+        } else {
+          setData(FALLBACK_HOMEPAGE_DATA);
+        }
         setLoading(false);
       })
       .catch(err => {
-        console.error("Homepage error:", err);
-        setError("Unable to connect to streaming provider. Retrying...");
+        console.error("Homepage API error, using client fallback:", err);
+        setData(FALLBACK_HOMEPAGE_DATA);
         setLoading(false);
       });
   }, []);
