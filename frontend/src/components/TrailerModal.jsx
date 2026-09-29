@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { X, Play, Loader, Film } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
+
 export default function TrailerModal({ isOpen, onClose, title, mediaId }) {
   const [videoKey, setVideoKey] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -12,7 +14,7 @@ export default function TrailerModal({ isOpen, onClose, title, mediaId }) {
     setLoading(true);
     setVideoKey(null);
 
-    fetch(`/api/trailer?q=${encodeURIComponent(title)}`)
+    fetch(`${API_BASE}/api/trailer?q=${encodeURIComponent(title)}`)
       .then(res => res.json())
       .then(data => {
         if (data.videoKey) {

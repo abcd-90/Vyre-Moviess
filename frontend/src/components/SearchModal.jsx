@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Search, X, Film, Tv, History, Loader2 } from 'lucide-react';
 import MovieCard from './MovieCard';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
+
 export default function SearchModal({ isOpen, onClose }) {
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
@@ -40,8 +42,8 @@ export default function SearchModal({ isOpen, onClose }) {
     const timer = setTimeout(async () => {
       try {
         const [resFetch, sugFetch] = await Promise.all([
-          fetch(`/api/search?q=${encodeURIComponent(query)}`),
-          fetch(`/api/suggest?q=${encodeURIComponent(query)}`)
+          fetch(`${API_BASE}/api/search?q=${encodeURIComponent(query)}`),
+          fetch(`${API_BASE}/api/suggest?q=${encodeURIComponent(query)}`)
         ]);
 
         const resData = await resFetch.json();

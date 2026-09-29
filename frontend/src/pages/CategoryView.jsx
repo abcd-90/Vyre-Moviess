@@ -32,6 +32,8 @@ const YEARS = [
   '2018'
 ];
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
+
 export default function CategoryView({ categoryKey, title, bookmarkMap, onToggleBookmark }) {
   const [baseItems, setBaseItems] = useState([]);
   const [displayItems, setDisplayItems] = useState([]);
@@ -47,7 +49,7 @@ export default function CategoryView({ categoryKey, title, bookmarkMap, onToggle
     setSelectedGenre('All Genres');
     setSelectedYear('All Years');
 
-    fetch(`/api/homepage?tab=${categoryKey}`)
+    fetch(`${API_BASE}/api/homepage?tab=${categoryKey}`)
       .then(res => res.json())
       .then(data => {
         const catalog = (data && data.catalog && data.catalog.length > 0) ? data.catalog : FALLBACK_HOMEPAGE_DATA.catalog;
@@ -100,7 +102,7 @@ export default function CategoryView({ categoryKey, title, bookmarkMap, onToggle
       if (selectedYear !== 'All Years') queryParts.push(selectedYear);
       const searchKeyword = queryParts.join(' ');
 
-      fetch(`/api/search?q=${encodeURIComponent(searchKeyword)}`)
+      fetch(`${API_BASE}/api/search?q=${encodeURIComponent(searchKeyword)}`)
         .then(r => r.json())
         .then(data => {
           const searchResults = data.results || [];

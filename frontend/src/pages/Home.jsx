@@ -4,13 +4,15 @@ import MovieCard from '../components/MovieCard';
 import { Play, TrendingUp, Sparkles, Tv, Film } from 'lucide-react';
 import { FALLBACK_HOMEPAGE_DATA } from '../data/fallbackData';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
+
 export default function Home({ bookmarkMap, onToggleBookmark, continueWatching = [] }) {
   const [data, setData] = useState(FALLBACK_HOMEPAGE_DATA);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('/api/homepage')
+    fetch(`${API_BASE}/api/homepage`)
       .then(res => {
         if (!res.ok) throw new Error("Failed to load homepage stream");
         return res.json();

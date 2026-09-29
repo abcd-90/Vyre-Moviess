@@ -6,6 +6,8 @@ import WatchPartyModal from '../components/WatchPartyModal';
 import TrailerModal from '../components/TrailerModal';
 import { ChevronLeft, ListVideo, Info, AlertTriangle, Users, Sparkles, Star, Calendar, Clock, Globe, Download, Film } from 'lucide-react';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
+
 export default function Watch({ onUpdateHistory }) {
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -31,9 +33,9 @@ export default function Watch({ onUpdateHistory }) {
     setError(null);
 
     Promise.all([
-      fetch(`/api/details/${id}`).then(r => r.json()),
-      fetch(`/api/streams?id=${id}&season=${season}&episode=${episode}`).then(r => r.json()),
-      fetch(`/api/subtitles?id=${id}`).then(r => r.json())
+      fetch(`${API_BASE}/api/details/${id}`).then(r => r.json()),
+      fetch(`${API_BASE}/api/streams?id=${id}&season=${season}&episode=${episode}`).then(r => r.json()),
+      fetch(`${API_BASE}/api/subtitles?id=${id}`).then(r => r.json())
     ])
     .then(([det, stData, subData]) => {
       setDetails(det);

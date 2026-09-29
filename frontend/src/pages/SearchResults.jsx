@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Search, Loader2, Film, Tv, Sparkles } from 'lucide-react';
 import MovieCard from '../components/MovieCard';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
+
 export default function SearchResults({ bookmarkMap, onToggleBookmark }) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -30,7 +32,7 @@ export default function SearchResults({ bookmarkMap, onToggleBookmark }) {
     }
 
     setLoading(true);
-    fetch(`/api/search?q=${encodeURIComponent(searchTerm)}`)
+    fetch(`${API_BASE}/api/search?q=${encodeURIComponent(searchTerm)}`)
       .then(res => res.json())
       .then(data => {
         // Deduplicate results by ID

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Play, Star, Plus, Check, Globe, Calendar, Clock, Film, Tv, ChevronRight } from 'lucide-react';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
+
 export default function MovieDetails({ bookmarkMap, onToggleBookmark }) {
   const { id } = useParams();
   const [details, setDetails] = useState(null);
@@ -14,7 +16,7 @@ export default function MovieDetails({ bookmarkMap, onToggleBookmark }) {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    fetch(`/api/details/${id}`)
+    fetch(`${API_BASE}/api/details/${id}`)
       .then(res => {
         if (!res.ok) throw new Error("Title details unavailable");
         return res.json();
