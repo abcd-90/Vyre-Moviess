@@ -1,3 +1,4 @@
+// Vercel Serverless Function Handler - VYRE OTT Platform
 const app = require('../server/index.js');
 
 module.exports = (req, res) => {
