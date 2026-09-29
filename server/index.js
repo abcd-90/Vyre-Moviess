@@ -471,6 +471,16 @@ function getCuratedFallbackHomepage() {
   };
 }
 
+// --- REST API ENDPOINTS ---
+
+// Normalize URL paths for Vercel serverless environment
+app.use((req, res, next) => {
+  if (req.url && req.url.startsWith('/api/')) {
+    req.url = req.url.substring(4);
+  }
+  next();
+});
+
 // 1. Homepage Endpoint
 app.get(['/api/homepage', '/homepage'], async (req, res) => {
   try {
@@ -508,7 +518,7 @@ app.get(['/api/homepage', '/homepage'], async (req, res) => {
 });
 
 // 2. Search & Suggest Endpoint
-app.get('/api/search', async (req, res) => {
+app.get(['/api/search', '/search'], async (req, res) => {
   try {
     const query = req.query.q || '';
     const page = parseInt(req.query.page || '1', 10);
@@ -533,7 +543,7 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
-app.get('/api/suggest', async (req, res) => {
+app.get(['/api/suggest', '/suggest'], async (req, res) => {
   try {
     const query = req.query.q || '';
     if (!query.trim()) return res.json({ suggestions: [] });
@@ -552,7 +562,7 @@ app.get('/api/suggest', async (req, res) => {
 });
 
 // 3. Details Endpoint (Movie / TV Show)
-app.get('/api/details/:id', async (req, res) => {
+app.get(['/api/details/:id', '/details/:id'], async (req, res) => {
   try {
     const rawId = req.params.id || '';
     const subjectId = rawId.split('?')[0];
