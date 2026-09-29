@@ -210,7 +210,7 @@ async function requestHosts(method, pathAndQuery, bodyObj = null, auth_token = n
     try {
       const res = await fetch(url, {
         ...opts,
-        signal: AbortSignal.timeout(10000)
+        signal: AbortSignal.timeout(2500)
       });
 
       if (res.ok) {
@@ -370,10 +370,109 @@ function sanitizeLanguage(lang) {
   return clean;
 }
 
-// --- REST API ENDPOINTS ---
+function getCuratedFallbackHomepage() {
+  const catalog = [
+    {
+      id: "157336",
+      provider: "moviebox",
+      title: "Interstellar",
+      type: "movie",
+      year: "2014",
+      poster: "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
+      backdrop: "https://image.tmdb.org/t/p/original/rAiYTfKGqDCRIIqo6LEuPJevZzC.jpg",
+      rating: "8.7",
+      description: "The adventures of a group of explorers who make use of a newly discovered wormhole to surpass the limitations on human space travel."
+    },
+    {
+      id: "872585",
+      provider: "moviebox",
+      title: "Oppenheimer",
+      type: "movie",
+      year: "2023",
+      poster: "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGvC271ug2I.jpg",
+      backdrop: "https://image.tmdb.org/t/p/original/fm6KqXrmjMQgrmZB22y9F2uYFft.jpg",
+      rating: "8.9",
+      description: "The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb."
+    },
+    {
+      id: "66732",
+      provider: "moviebox",
+      title: "Stranger Things",
+      type: "series",
+      year: "2016",
+      poster: "https://image.tmdb.org/t/p/w500/49WJfeN0moxb9IPfGn88qMG4d2.jpg",
+      backdrop: "https://image.tmdb.org/t/p/original/56v2KjBlU4XaOv9r1kZqVh7pE2z.jpg",
+      rating: "8.6",
+      description: "When a young boy vanishes, a small town uncovers a mystery involving secret experiments and supernatural forces."
+    },
+    {
+      id: "1396",
+      provider: "moviebox",
+      title: "Breaking Bad",
+      type: "series",
+      year: "2008",
+      poster: "https://image.tmdb.org/t/p/w500/ztkUQFLAcSSvtU2Zkoes9y33o.jpg",
+      backdrop: "https://image.tmdb.org/t/p/original/tsRy63MuZvF8ETycrKHmB8avx67.jpg",
+      rating: "9.5",
+      description: "A chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing methamphetamine to secure his family's financial future."
+    },
+    {
+      id: "76600",
+      provider: "moviebox",
+      title: "Avatar: The Way of Water",
+      type: "movie",
+      year: "2022",
+      poster: "https://image.tmdb.org/t/p/w500/t6HIwfg5gFwCSFDiW2iCOtUZ3ft.jpg",
+      backdrop: "https://image.tmdb.org/t/p/original/vL5LR6WdxWPjUnFRVPW3Y5eW0y5.jpg",
+      rating: "7.7",
+      description: "Jake Sully lives with his newfound family on Pandora until a familiar threat returns to finish what was previously started."
+    },
+    {
+      id: "1429",
+      provider: "moviebox",
+      title: "Attack on Titan",
+      type: "series",
+      year: "2013",
+      poster: "https://image.tmdb.org/t/p/w500/hTP1DtLGFamjL6rml92qwpD6hE9.jpg",
+      backdrop: "https://image.tmdb.org/t/p/original/yD2o6oV25Wl9Z0y8E6eXb1W8Xy3.jpg",
+      rating: "9.0",
+      description: "Young Eren Jaeger vows to cleanse the earth of the giant humanoid Titans that have brought humanity to the brink of extinction."
+    },
+    {
+      id: "93405",
+      provider: "moviebox",
+      title: "Squid Game",
+      type: "series",
+      year: "2021",
+      poster: "https://image.tmdb.org/t/p/w500/d5NXSklXo0qyIYkgV94Oi2oR6Zs.jpg",
+      backdrop: "https://image.tmdb.org/t/p/original/oaGsg2P0jPhraMvwJAWV347RChm.jpg",
+      rating: "8.4",
+      description: "Cash-strapped players accept a strange invitation to compete in children's games with deadly high stakes."
+    },
+    {
+      id: "155",
+      provider: "moviebox",
+      title: "The Dark Knight",
+      type: "movie",
+      year: "2008",
+      poster: "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
+      backdrop: "https://image.tmdb.org/t/p/original/hkBaDkMWbLaf8B1lsWsKX7Ew3Xq.jpg",
+      rating: "9.0",
+      description: "When the menace known as the Joker wreaks havoc on Gotham, Batman must accept one of his greatest tests."
+    }
+  ];
+
+  return {
+    featured: catalog.slice(0, 4),
+    trending: catalog.slice(0, 8),
+    popular: catalog.slice(2, 8),
+    recentlyAdded: catalog.slice(4, 8),
+    catalog
+  };
+}
 
 // 1. Homepage Endpoint
-app.get('/api/homepage', async (req, res) => {
+app.get(['/api/homepage', '/homepage'], async (req, res) => {
   try {
     const tabParam = req.query.tab || '0';
     let mappedTab = '0';
@@ -387,21 +486,25 @@ app.get('/api/homepage', async (req, res) => {
     const data = await movieboxApiRequest('GET', `/wefeed-mobile-bff/tab-operating?page=${page}&tabId=${mappedTab}&version=`);
     const catalog = parseHomepagePayload(data);
 
-    const featured = catalog.slice(0, 5);
-    const trending = catalog.slice(5, 15);
-    const popular = catalog.slice(15, 25);
-    const recentlyAdded = catalog.slice(25);
+    if (catalog && catalog.length > 0) {
+      const featured = catalog.slice(0, 5);
+      const trending = catalog.slice(5, 15);
+      const popular = catalog.slice(15, 25);
+      const recentlyAdded = catalog.slice(25);
 
-    res.json({
-      featured,
-      trending,
-      popular,
-      recentlyAdded,
-      catalog
-    });
+      return res.json({
+        featured,
+        trending,
+        popular,
+        recentlyAdded,
+        catalog
+      });
+    }
   } catch (err) {
-    res.status(500).json({ error: err.message || "Failed to fetch homepage data" });
+    console.error("Homepage API error, sending curated fallback:", err.message);
   }
+  // Fallback if provider hosts are slow/blocked on cloud
+  res.json(getCuratedFallbackHomepage());
 });
 
 // 2. Search & Suggest Endpoint
