@@ -8,12 +8,12 @@
   },
   "architecture": {
     "64bit": {
-      "url": "https://github.com/mesamirh/MovieBox-Tui/releases/download/v0.1.24/MovieBox_Windows_x64.zip",
-      "hash": "4fb9472891c4b5832bc8a3e576939e280cc676e6bba810b78b7cd335ef26c079"
+      "url": "https://github.com/abcd-90/Vyre-Moviess/releases/download/v0.1.24/MovieBox_Windows_x64.zip",
+      "hash": "944fcb1bd5e3ccdc5fd7d3cc143ec5e0240973e8d17d99a9f4dd65c86294a7ac"
     },
     "arm64": {
-      "url": "https://github.com/mesamirh/MovieBox-Tui/releases/download/v0.1.24/MovieBox_Windows_arm64.zip",
-      "hash": "d458453fc1a335ec4d0ff86fb9eb59f5bd5f0dac2374ed2310144c54bad29c34"
+      "url": "https://github.com/abcd-90/Vyre-Moviess/releases/download/v0.1.24/MovieBox_Windows_arm64.zip",
+      "hash": "0efe273d4701bd6f2755d2a3b9bda9831ad6178cebe6972de98463a960f4ceab"
     }
   },
   "bin": "moviebox-tui.exe",
