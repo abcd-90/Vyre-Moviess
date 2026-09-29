@@ -1225,9 +1225,13 @@ app.get('/api/download-file', async (req, res) => {
 });
 
 // Serve frontend static build files if present
-app.use(express.static(path.join(__dirname, '../dist')));
+const distPath1 = path.join(__dirname, '../dist');
+const distPath2 = path.join(__dirname, '../frontend/dist');
+const staticPath = require('fs').existsSync(distPath1) ? distPath1 : distPath2;
+
+app.use(express.static(staticPath));
 app.get('*', (req, res) => {
-  const indexPath = path.join(__dirname, '../dist/index.html');
+  const indexPath = path.join(staticPath, 'index.html');
   if (require('fs').existsSync(indexPath)) {
     res.sendFile(indexPath);
   } else {
